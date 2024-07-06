@@ -1,0 +1,12 @@
+student_project
+
+Find the average duration of completed projects
+
+SELECT AVG(DATEDIFF(end_date, start_date)) AS average_duration
+from student projects;
+
+Select all rows from the Student_Projects table, sorted by project_id
+SELECT * FROM Student_Project WHERE status = 'Ongoing' ORDER BY start_date ASC;
+
+Select all rows from the Student_Projects table, sorted by project_id
+SELECT * FROM Student_Project WHERE status = 'Completed' ORDER BY start_date ASC;
