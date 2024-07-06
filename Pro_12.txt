@@ -1,0 +1,47 @@
+PYTHON_CODE:
+#Import required Libraries:
+import mysql.connector
+dataBase = mysql.connector.connect(host = "localhost",user = "root",
+password = "")
+print("Database Connected")
+# preparing a cursor object
+cursorObject = dataBase.cursor()
+# creating database
+cursorObject.execute("CREATE DATABASE REVA_RBS")
+print("Database Created in MYSQL")
+#Creating a new table
+database = mysql.connector.connect(host='localhost',user='root',
+password='',database='REVA_RBS')
+cursorObject = database.cursor()
+studentrecord = """create table studentrecord(
+s_id numeric(5) primary key,
+s_name varchar(20) NOT NULL,
+course_Name varchar(5),
+age numeric(2),
+city varchar(20)
+)"""
+#Execute the query
+cursorObject.execute(studentrecord)
+print("Table Created")
+#Create the table and inserting values in the record:
+ch='y'
+while ch=='y' or ch=='Y':
+sql="insert into studentrecord (s_id, s_name, course_name, age, city) values (%s, %s, %s, %s, %s)"
+s_id = input("enter the Student ID:")
+s_name = input("enter the Student Name:")
+course_name = input("enter the Course Name:")
+age = input("enter the Age:")
+city = input("enter the City:")
+val=(s_id,s_name,course_name,age,city)
+cursorObject.execute(sql,val)
+database.commit()
+print("Record Inserted")
+ch=input("Do you want to continue y/n:")
+try:
+query = "Select * from studentrecord"
+cursorObject.execute(query)
+myresult = cursorObject.fetchall()
+for x in myresult:
+print(x)
+except Exception as ex:
+       print(ex)
