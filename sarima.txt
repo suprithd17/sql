@@ -1,0 +1,46 @@
+sa
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+
+df = pd.read_csv('sales data-set.csv')
+
+df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y', errors='coerce')
+
+df.set_index('Date', inplace=True)
+
+monthly_data = df['Weekly_Sales'].resample('M').sum()
+
+result = adfuller(monthly_data.dropna())
+print('ADF Statistic:', result[0])
+print('p-value:', result[1])
+
+
+plot_acf(monthly_data.dropna())
+plot_pacf(monthly_data.dropna())
+plt.show()
+
+
+model = SARIMAX(monthly_data, order=(1, 1, 1), seasonal_order=(1, 1, 1, 12))
+
+# Fit the model
+model_fit = model.fit(disp=False)
+print(model_fit.summary())
+
+
+forecast = model_fit.get_forecast(steps=12)
+forecast_index = pd.date_range(start=monthly_data.index[-1], periods=12, freq='M')
+forecast_series = pd.Series(forecast.predicted_mean, index=forecast_index)
+
+# Plot the results
+plt.figure(figsize=(10, 6))
+plt.plot(monthly_data, label='Observed')
+plt.plot(forecast_series, label='Forecast', color='red')
+plt.legend()
+plt.show()
+
+
